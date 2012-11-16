@@ -217,23 +217,26 @@ module RocketTag
             where(with_tag_context(options.delete(:on)))
         end
 
-        q = q.group_by_all_columns.
-          select{count(tags.id).as( tags_count)}.
-          select{"#{t}.*"}.
-          order("tags_count desc")
+        q = q.group_by_all_columns
 
-        # Isolate the aggregate uery by wrapping it as
-        #
-        # select * from ( ..... ) tags
-        q = from(q.arel.as(self.table_name))
-        
-        # Restrict by minimum tag counts if required
-        min = options.delete :min 
-        q = q.where{tags_count>=min} if min 
+        unless options.delete :exclude_count
+          q = q.select{count(tags.id).as( tags_count)}.
+            select{"#{t}.*"}.
+            order("tags_count desc")
 
-        # Require all the tags if required
-        all = options.delete :all
-        q = q.where{tags_count==tags_list.length} if all
+          # Isolate the aggregate uery by wrapping it as
+          #
+          # select * from ( ..... ) tags
+          q = from(q.arel.as(self.table_name))
+          
+          # Restrict by minimum tag counts if required
+          min = options.delete :min 
+          q = q.where{tags_count>=min} if min 
+
+          # Require all the tags if required
+          all = options.delete :all
+          q = q.where{tags_count==tags_list.length} if all
+        end
 
         # Return the relation        
         q
