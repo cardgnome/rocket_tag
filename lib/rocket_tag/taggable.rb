@@ -217,7 +217,7 @@ module RocketTag
             where(with_tag_context(options.delete(:on)))
         end
 
-        q = q.group_by_all_columns
+        # q = q.group_by_all_columns
 
         unless options.delete :exclude_count
           q = q.select{count(tags.id).as( tags_count)}.
