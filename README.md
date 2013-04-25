@@ -20,6 +20,17 @@ Create the migration at the command line
 	rake db:migrate
 	rake db:test:prepare
 
+Configuration
+-------------
+
+Add configurations to `config/initializers/rocket_tag.rb`:
+
+```ruby
+RocketTag.configure do |config|
+  config.force_lowercase = true # Automatically convert all tags to lowercase (optional, default: false)
+end
+```
+
 Usage
 -----
 
@@ -111,6 +122,19 @@ where we might have
 and you can access the field *tags_count* on each Tag instance returned
 by the above query. Generating the CSS and html for your tag cloud
 is outside the scope of this project but it should be easy to do.
+
+Alias tags. 
+If you have several tags that means the same things, then create alias for it.
+    
+    #array with inctances of RocketTag::Tag
+    tag1, tag2, tag3 = ['ror', 'ruby-on-rails', 'rails'] 
+    tag1.alias << [tag2, tag3]
+    #Models with tag `rails`
+    # returns all Posts with `rails`, `ruby-on-rails` and `ror` tags 
+    Post.tagged_with(['rails']) 
+
+
+
 
 Contributing to rocket_tag
 --------------------------
